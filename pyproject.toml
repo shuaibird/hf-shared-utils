@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hf-shared-utils"
+version = "0.1.0"
+description = "Shared utilities for hf"
+requires-python = ">=3.10"
+dependencies = [
+    "gradio>=4",
+    "openai>=1",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hf_shared_utils*"]
+namespaces = true
