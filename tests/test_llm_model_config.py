@@ -97,3 +97,79 @@ def test_show_custom_fields_non_custom():
 
     assert _get_update_attr(provider_update, "visible") is False
     assert _get_update_attr(model_update, "visible") is False
+
+
+def test_resolve_model_defaults_known_provider_known_model():
+    provider, choices, model_choice, model_custom = mod.resolve_model_defaults("openai", "gpt-4o")
+
+    assert provider == "openai"
+    assert "gpt-4o" in choices
+    assert choices[-1] == "custom"
+    assert model_choice == "gpt-4o"
+    assert model_custom == ""
+
+
+def test_resolve_model_defaults_known_provider_custom_model():
+    provider, choices, model_choice, model_custom = mod.resolve_model_defaults("openai", "my-model")
+
+    assert provider == "openai"
+    assert "custom" in choices
+    assert model_choice == "custom"
+    assert model_custom == "my-model"
+
+
+def test_resolve_model_defaults_unknown_provider():
+    provider, choices, model_choice, model_custom = mod.resolve_model_defaults("unknown", "my-model")
+
+    assert provider == "custom"
+    assert choices == ["custom"]
+    assert model_choice == "custom"
+    assert model_custom == "my-model"
+
+
+def test_resolve_model_defaults_empty_inputs():
+    provider, choices, model_choice, model_custom = mod.resolve_model_defaults("", "")
+
+    assert provider == "openai"
+    assert choices[-1] == "custom"
+    assert model_choice == mod.POPULAR_MODELS["openai"][0]
+    assert model_custom == ""
+
+
+def test_build_model_config_updates_sets_provider_and_model():
+    provider_update, provider_url_update, model_choice_update, model_custom_update = (
+        mod.build_model_config_updates(provider="openai", model_name="gpt-4o")
+    )
+
+    assert _get_update_attr(provider_update, "value") == "openai"
+    assert _get_update_attr(model_choice_update, "value") == "gpt-4o"
+    assert "gpt-4o" in _get_update_attr(model_choice_update, "choices")
+    assert _get_update_attr(model_custom_update, "visible") is False
+    assert _get_update_attr(model_custom_update, "value") == ""
+
+
+def test_build_model_config_updates_custom_model_with_current_provider():
+    provider_update, provider_url_update, model_choice_update, model_custom_update = (
+        mod.build_model_config_updates(model_name="my-model", current_provider="openai")
+    )
+
+    assert _get_update_attr(provider_update, "value") is None
+    assert _get_update_attr(model_choice_update, "value") == "custom"
+    assert _get_update_attr(model_custom_update, "visible") is True
+    assert _get_update_attr(model_custom_update, "value") == "my-model"
+
+
+def test_build_model_config_updates_custom_provider_url():
+    provider_update, provider_url_update, model_choice_update, model_custom_update = (
+        mod.build_model_config_updates(
+            provider="custom",
+            model_name="my-model",
+            provider_url=" https://example.com/v1 ",
+        )
+    )
+
+    assert _get_update_attr(provider_update, "value") == "custom"
+    assert _get_update_attr(provider_url_update, "visible") is True
+    assert _get_update_attr(provider_url_update, "value") == "https://example.com/v1"
+    assert _get_update_attr(model_choice_update, "value") == "custom"
+    assert _get_update_attr(model_custom_update, "visible") is True

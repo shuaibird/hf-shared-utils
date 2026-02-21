@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 import gradio as gr
 from openai import OpenAI
 
@@ -142,6 +142,37 @@ def resolve_model_name(model_choice: str, model_name_custom: str) -> str:
     return (model_choice or "").strip()
 
 
+def resolve_model_defaults(
+    provider: Optional[str],
+    model_name: Optional[str],
+) -> Tuple[str, List[str], str, str]:
+    provider_value = (provider or "").strip().lower()
+    if not provider_value:
+        provider_value = "openai"
+    if provider_value not in PROVIDERS:
+        provider_value = "custom"
+
+    model_value = (model_name or "").strip()
+
+    base_models = POPULAR_MODELS.get(provider_value, [])
+    model_choices = base_models + ["custom"] if base_models else ["custom"]
+
+    if model_value:
+        if model_value in base_models:
+            return provider_value, model_choices, model_value, ""
+        return provider_value, model_choices, "custom", model_value
+
+    if base_models:
+        return provider_value, model_choices, base_models[0], ""
+
+    return provider_value, model_choices, "custom", ""
+
+
+def _normalize_optional(value: Optional[str]) -> Optional[str]:
+    normalized = (value or "").strip()
+    return normalized or None
+
+
 def create_openai_client(provider: str, custom_base_url: str, api_key: str):
     api_key = (api_key or "").strip()
     if not api_key:
@@ -175,28 +206,99 @@ def show_custom_fields(provider: str, model_choice: str):
     )
 
 
-def build_model_config_row():
+def build_model_config_updates(
+    provider: Optional[str] = None,
+    model_name: Optional[str] = None,
+    provider_url: Optional[str] = None,
+    current_provider: Optional[str] = None,
+):
+    provider_override = _normalize_optional(provider)
+    model_override = _normalize_optional(model_name)
+    current_provider_value = _normalize_optional(current_provider)
+
+    provider_for_models = provider_override or current_provider_value
+
+    provider_update = gr.update()
+    provider_url_kwargs: Dict[str, object] = {}
+    model_choice_kwargs: Dict[str, object] = {}
+    model_custom_kwargs: Dict[str, object] = {}
+
+    if provider_override is not None or model_override is not None:
+        if provider_for_models:
+            provider_value, model_choices, model_choice_value, model_custom_value = resolve_model_defaults(
+                provider_for_models,
+                model_override,
+            )
+        else:
+            provider_value = None
+            model_choices = None
+            model_choice_value = "custom" if model_override else None
+            model_custom_value = model_override or ""
+
+        if provider_override is not None and provider_value:
+            provider_update = gr.update(value=provider_value)
+            provider_url_kwargs["visible"] = provider_value == "custom"
+            if model_choices is not None:
+                model_choice_kwargs["choices"] = model_choices
+
+        if model_choice_value is not None:
+            model_choice_kwargs["value"] = model_choice_value
+            model_custom_kwargs["visible"] = model_choice_value == "custom"
+        if model_custom_value is not None:
+            model_custom_kwargs["value"] = model_custom_value
+
+    if provider_url is not None:
+        provider_url_kwargs["value"] = (provider_url or "").strip()
+        if "visible" not in provider_url_kwargs and current_provider_value is not None:
+            provider_url_kwargs["visible"] = current_provider_value == "custom"
+
+    provider_url_update = gr.update(**provider_url_kwargs) if provider_url_kwargs else gr.update()
+    model_choice_update = gr.update(**model_choice_kwargs) if model_choice_kwargs else gr.update()
+    model_custom_update = gr.update(**model_custom_kwargs) if model_custom_kwargs else gr.update()
+
+    return provider_update, provider_url_update, model_choice_update, model_custom_update
+
+
+def build_model_config_row(
+    default_provider: Optional[str] = None,
+    default_model: Optional[str] = None,
+    default_provider_url: Optional[str] = None,
+):
+    provider_value, model_choices, model_choice_value, model_name_custom_value = resolve_model_defaults(
+        default_provider,
+        default_model,
+    )
+    provider_is_custom = provider_value == "custom"
+    model_is_custom = model_choice_value == "custom"
+
     with gr.Row():
-        provider = gr.Dropdown(label="Provider", choices=PROVIDERS, value="openai", scale=2)
+        provider = gr.Dropdown(
+            label="Provider",
+            choices=PROVIDERS,
+            value=provider_value,
+            scale=2,
+        )
 
         provider_custom_url = gr.Textbox(
             label="Provider URL",
             placeholder="https://api.openai.com/v1",
-            visible=False,
+            value=(default_provider_url or "").strip(),
+            visible=provider_is_custom,
             scale=4,
         )
 
         model_choice = gr.Dropdown(
             label="Model",
-            choices=POPULAR_MODELS["openai"] + ["custom"],
-            value=POPULAR_MODELS["openai"][0],
+            choices=model_choices,
+            value=model_choice_value,
             scale=3,
         )
 
         model_name_custom = gr.Textbox(
             label="Model Name",
             placeholder="e.g. gpt-4o-mini",
-            visible=False,
+            value=model_name_custom_value,
+            visible=model_is_custom,
             scale=3,
         )
 
@@ -227,10 +329,18 @@ def wire_model_config_events(provider, provider_custom_url, model_choice, model_
 # ----------------------------
 # Public Section Builder (ONLY thing app.py should call)
 # ----------------------------
-def build_model_config_section():
+def build_model_config_section(
+    default_provider: Optional[str] = None,
+    default_model: Optional[str] = None,
+    default_provider_url: Optional[str] = None,
+):
     build_security_notice()
 
-    provider, provider_custom_url, model_choice, model_name_custom, api_key = build_model_config_row()
+    provider, provider_custom_url, model_choice, model_name_custom, api_key = build_model_config_row(
+        default_provider=default_provider,
+        default_model=default_model,
+        default_provider_url=default_provider_url,
+    )
 
     wire_model_config_events(provider, provider_custom_url, model_choice, model_name_custom)
 
