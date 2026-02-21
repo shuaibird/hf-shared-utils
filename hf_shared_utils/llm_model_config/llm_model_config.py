@@ -8,11 +8,11 @@ from openai import OpenAI
 # ----------------------------
 def build_security_notice():
     SECURITY_NOTICE_TEXT = (
-        "This demo runs on Hugging Face Spaces. "
-        "Your API key is used only to run this session and is not stored. "
+        "This demo runs on Hugging Face Spaces.<br>"
+        "Your API key is used only to run this session and is not stored.<br>"
         "All source code is public and can be inspected or self-hosted."
     )
-    return gr.Markdown(f"**Note:** {SECURITY_NOTICE_TEXT}")
+    return gr.Markdown(f"**Note:**<br>{SECURITY_NOTICE_TEXT}")
 
 
 # ----------------------------
