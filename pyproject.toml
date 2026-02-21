@@ -12,6 +12,15 @@ dependencies = [
     "openai>=1",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=3",
+    "pytest>=7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["hf_shared_utils*"]

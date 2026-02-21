@@ -7,6 +7,27 @@ Shared utilities for Hugging Face Spaces and Gradio apps, focused on LLM model/p
 pip install -e .
 ```
 
+**Dev Setup**
+- Python `>=3.10` (pre-commit is configured to use `python3.12` by default).
+- Install dev tooling:
+```sh
+pip install -e ".[dev]"
+```
+- Enable git hooks:
+```sh
+pre-commit install
+```
+
+**Run Tests**
+```sh
+pytest
+```
+
+**Run Pre-commit Manually**
+```sh
+pre-commit run --all-files
+```
+
 **What’s Inside**
 `hf_shared_utils.llm_model_config` provides:
 - A drop-in Gradio UI section for provider, model, and API key inputs.
