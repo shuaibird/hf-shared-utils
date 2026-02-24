@@ -12,23 +12,24 @@ def build_security_notice():
         "Your API key is used only to run this session and is not stored.<br>"
         "All source code is public and can be inspected or self-hosted."
     )
-    return gr.Markdown(
-        (
-            "<div style='"
-            "margin-top: 0.75rem;"
-            "padding-top: 0;"
-            "border-top: none;"
-            "background: transparent;"
-            "color: #8d8d92;"
-            "font-size: 0.86rem;"
-            "line-height: 1.45;"
-            "'>"
-            "<div style='margin-bottom: 0.25rem; font-weight: 600; color: #8d8d92;'>Disclaimer</div>"
-            f"{SECURITY_NOTICE_TEXT}"
-            "</div>"
-        ),
-        container=False,
+    notice_markup = (
+        "<div style='"
+        "margin-top: 0.75rem;"
+        "color: #8f8f94;"
+        "font-size: 0.84rem;"
+        "line-height: 1.45;"
+        "'>"
+        "<div style='margin-bottom: 0.25rem; font-weight: 600; color: #8f8f94;'>Disclaimer</div>"
+        f"{SECURITY_NOTICE_TEXT}"
+        "</div>"
     )
+
+    # Use borderless markdown container when available.
+    # Some Gradio versions do not accept `container`.
+    try:
+        return gr.Markdown(notice_markup, container=False)
+    except TypeError:
+        return gr.Markdown(notice_markup)
 
 
 # ----------------------------
