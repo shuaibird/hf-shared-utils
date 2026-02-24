@@ -6,6 +6,11 @@ from openai import OpenAI
 # ----------------------------
 # Security Notice (internal)
 # ----------------------------
+DISCLAIMER_CONTAINER_ID = "hf-model-config-disclaimer"
+MODEL_CONFIG_SECTION_ID = "hf-model-config-section"
+MODEL_CONFIG_GROUP_CLASS = "hf-model-config-group"
+
+
 def build_security_notice():
     SECURITY_NOTICE_TEXT = (
         "This demo runs on Hugging Face Spaces.<br>"
@@ -13,23 +18,42 @@ def build_security_notice():
         "All source code is public and can be inspected or self-hosted."
     )
     notice_markup = (
-        "<div style='"
+        "<style>"
+        ".gr-group:has(#hf-model-config-disclaimer){"
+        "background: var(--block-background-fill) !important;"
+        "}"
+        ".hide-container:has(#hf-model-config-disclaimer){"
+        "background: var(--block-background-fill) !important;"
+        "}"
+        ".styler:has(#hf-model-config-disclaimer){"
+        "--form-gap-width: 0px !important;"
+        "}"
+        f"#{DISCLAIMER_CONTAINER_ID}{{"
+        "background: transparent !important;"
+        "border: none !important;"
+        "box-shadow: none !important;"
+        "padding: 0 !important;"
+        "}}"
+        "</style>"
+        f"<div id='{DISCLAIMER_CONTAINER_ID}' style='"
         "margin-top: 0.75rem;"
         "color: #8f8f94;"
         "font-size: 0.84rem;"
         "line-height: 1.45;"
         "'>"
-        "<div style='margin-bottom: 0.25rem; font-weight: 600; color: #8f8f94;'>Disclaimer</div>"
+        "<div style='margin: 0 0 0.25rem 0; font-weight: 600; color: #8f8f94;'>Disclaimer</div>"
         f"{SECURITY_NOTICE_TEXT}"
         "</div>"
     )
 
-    # Use borderless markdown container when available.
-    # Some Gradio versions do not accept `container`.
+    html_component = getattr(gr, "HTML", None)
+    if html_component is None:
+        raise RuntimeError("gr.HTML is required to render the security disclaimer.")
+
     try:
-        return gr.Markdown(notice_markup, container=False)
+        return html_component(notice_markup, container=False)
     except TypeError:
-        return gr.Markdown(notice_markup)
+        return html_component(notice_markup)
 
 
 # ----------------------------
@@ -351,7 +375,7 @@ def build_model_config_section(
     default_model: Optional[str] = None,
     default_provider_url: Optional[str] = None,
 ):
-    with gr.Group():
+    with gr.Group(elem_id=MODEL_CONFIG_SECTION_ID, elem_classes=[MODEL_CONFIG_GROUP_CLASS]):
         provider, provider_custom_url, model_choice, model_name_custom, api_key = build_model_config_row(
             default_provider=default_provider,
             default_model=default_model,
