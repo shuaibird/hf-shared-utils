@@ -12,7 +12,14 @@ def build_security_notice():
         "Your API key is used only to run this session and is not stored.<br>"
         "All source code is public and can be inspected or self-hosted."
     )
-    return gr.Markdown(f"**Note:**<br>{SECURITY_NOTICE_TEXT}")
+    return gr.Markdown(
+        (
+            "<div style='color: #6b7280;'>"
+            "<strong>Disclaimer:</strong><br>"
+            f"{SECURITY_NOTICE_TEXT}"
+            "</div>"
+        )
+    )
 
 
 # ----------------------------
@@ -334,13 +341,13 @@ def build_model_config_section(
     default_model: Optional[str] = None,
     default_provider_url: Optional[str] = None,
 ):
-    build_security_notice()
-
-    provider, provider_custom_url, model_choice, model_name_custom, api_key = build_model_config_row(
-        default_provider=default_provider,
-        default_model=default_model,
-        default_provider_url=default_provider_url,
-    )
+    with gr.Group():
+        provider, provider_custom_url, model_choice, model_name_custom, api_key = build_model_config_row(
+            default_provider=default_provider,
+            default_model=default_model,
+            default_provider_url=default_provider_url,
+        )
+        build_security_notice()
 
     wire_model_config_events(provider, provider_custom_url, model_choice, model_name_custom)
 
