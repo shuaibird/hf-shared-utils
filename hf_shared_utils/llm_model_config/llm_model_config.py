@@ -14,11 +14,20 @@ def build_security_notice():
     )
     return gr.Markdown(
         (
-            "<div style='color: #6b7280;'>"
-            "<strong>Disclaimer:</strong><br>"
+            "<div style='"
+            "margin-top: 0.75rem;"
+            "padding-top: 0;"
+            "border-top: none;"
+            "background: transparent;"
+            "color: #8d8d92;"
+            "font-size: 0.86rem;"
+            "line-height: 1.45;"
+            "'>"
+            "<div style='margin-bottom: 0.25rem; font-weight: 600; color: #8d8d92;'>Disclaimer</div>"
             f"{SECURITY_NOTICE_TEXT}"
             "</div>"
-        )
+        ),
+        container=False,
     )
 
 
