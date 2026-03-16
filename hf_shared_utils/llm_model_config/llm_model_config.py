@@ -268,7 +268,12 @@ def _normalize_optional(value: Optional[str]) -> Optional[str]:
     return normalized or None
 
 
-def create_openai_client(provider: str, custom_base_url: str, api_key: str):
+def create_openai_client(
+    provider: str,
+    custom_base_url: str,
+    api_key: str,
+    verify_ssl: bool = True,
+):
     api_key = (api_key or "").strip()
     if not api_key:
         raise ValueError("Missing API key.")
@@ -278,7 +283,15 @@ def create_openai_client(provider: str, custom_base_url: str, api_key: str):
     if (provider or "").strip().lower() == "custom" and not base_url:
         raise ValueError("Custom provider requires Base URL.")
 
-    return OpenAI(api_key=api_key, base_url=base_url or None)
+    http_client = None
+    if not verify_ssl:
+        import httpx
+        http_client = httpx.Client(verify=False)
+    return OpenAI(
+        api_key=api_key,
+        base_url=base_url or None,
+        http_client=http_client,
+    )
 
 
 # ----------------------------

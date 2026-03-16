@@ -81,9 +81,12 @@ Current providers:
 - `anthropic`
 - `google`
 - `deepseek`
+- `mistral`
+- `cohere`
 - `groq`
 - `grok`
 - `openrouter`
+- `minimax`
 - `custom`
 
 Each provider has a small list of popular models used to prefill the model dropdown, plus a `custom` option.
@@ -98,8 +101,9 @@ Each provider has a small list of popular models used to prefill the model dropd
   Use this to change values dynamically after render. All inputs are optional; any omitted fields are left unchanged.
 - `resolve_model_name(model_choice, model_name_custom)`
   Returns the selected model string, falling back to the custom input when `model_choice == "custom"`.
-- `create_openai_client(provider, custom_base_url, api_key)`
+- `create_openai_client(provider, custom_base_url, api_key, verify_ssl=True)`
   Returns an `OpenAI` client configured with the provider base URL. Raises `ValueError` if the API key is missing, or if `provider == "custom"` and the base URL is empty.
+  Set `verify_ssl=False` to disable SSL certificate verification (useful for self-signed certs or local endpoints).
 
 **Dynamic Updates Example**
 ```python

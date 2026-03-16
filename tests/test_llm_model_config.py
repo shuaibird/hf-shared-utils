@@ -41,7 +41,7 @@ def test_create_openai_client_custom_missing_base_url():
 
 def test_create_openai_client_sets_base_url_for_known_provider(monkeypatch):
     class DummyClient:
-        def __init__(self, api_key, base_url=None):
+        def __init__(self, api_key, base_url=None, http_client=None):
             self.api_key = api_key
             self.base_url = base_url
 
@@ -56,7 +56,7 @@ def test_create_openai_client_sets_base_url_for_known_provider(monkeypatch):
 
 def test_create_openai_client_custom_base_url(monkeypatch):
     class DummyClient:
-        def __init__(self, api_key, base_url=None):
+        def __init__(self, api_key, base_url=None, http_client=None):
             self.api_key = api_key
             self.base_url = base_url
 
