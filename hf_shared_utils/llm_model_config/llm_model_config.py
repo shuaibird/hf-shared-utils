@@ -67,6 +67,7 @@ BASE_URLS: Dict[str, str] = {
     "groq": "https://api.groq.com/openai/v1",
     "grok": "https://api.x.ai/v1",
     "openrouter": "https://openrouter.ai/api/v1",
+    "minimax": "https://api.minimax.chat/v1",
     "custom": "",
 }
 
@@ -78,6 +79,7 @@ PROVIDERS: List[str] = [
     "groq",
     "grok",
     "openrouter",
+    "minimax",
     "custom",
 ]
 
@@ -86,6 +88,7 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # https://developers.openai.com/api/docs/models
     "openai": [
         # GPT-5 family (latest recommended)
+        "gpt-5.4",
         "gpt-5.2",
         "gpt-5.1",
         "gpt-5",
@@ -107,7 +110,7 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # https://platform.claude.com/docs/en/about-claude/models/overview
     "anthropic": [
         "claude-opus-4-6",
-        "claude-sonnet-4-5",
+        "claude-sonnet-4-6",
         "claude-haiku-4-5",
         # Snapshot IDs (useful when you want deterministic behavior)
         "claude-sonnet-4-5-20250929",
@@ -117,6 +120,9 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # Google Gemini model codes (OpenAI-compat endpoint supported)
     # https://ai.google.dev/gemini-api/docs/models
     "google": [
+        "gemini-3.1-pro",
+        "gemini-3-flash",
+        "gemini-3.1-flash-lite",
         "gemini-2.5-pro",
         "gemini-2.5-flash",
         "gemini-2.5-flash-lite",
@@ -146,6 +152,7 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # xAI Grok model IDs (see xAI docs)
     # https://docs.x.ai/developers/models
     "grok": [
+        "grok-4.20",
         "grok-4",
         "grok-4-latest",
         "grok-3",
@@ -155,12 +162,23 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # OpenRouter uses provider-prefixed model IDs.
     # Keep this list short (OpenRouter has many models and changes frequently).
     "openrouter": [
-        "openai/gpt-5.2",
-        "openai/gpt-4.1",
+        "openai/gpt-5.4",
+        "openai/gpt-5-mini",
         "anthropic/claude-opus-4-6",
-        "google/gemini-2.5-pro",
+        "anthropic/claude-sonnet-4-6",
+        "google/gemini-3.1-pro",
         "deepseek/deepseek-reasoner",
-        "x-ai/grok-4",
+        "x-ai/grok-4.20",
+        "minimax/m2.5",
+    ],
+
+    # MiniMax model IDs (see MiniMax API docs)
+    # https://api.minimax.chat/
+    "minimax": [
+        "m2.5",
+        "m2-her",
+        "m2.1",
+        "m2",
     ],
 
     "custom": [],
