@@ -69,7 +69,7 @@ BASE_URLS: Dict[str, str] = {
     "groq": "https://api.groq.com/openai/v1",
     "grok": "https://api.x.ai/v1",
     "openrouter": "https://openrouter.ai/api/v1",
-    "minimax": "https://api.minimax.chat/v1",
+    "minimax": "https://api.minimax.io/v1",
     "custom": "",
 }
 
