@@ -9,7 +9,6 @@ description = "Shared utilities for hf"
 requires-python = ">=3.10"
 dependencies = [
     "gradio>=4",
-    "httpx>=0.24",
     "openai>=1",
 ]
 

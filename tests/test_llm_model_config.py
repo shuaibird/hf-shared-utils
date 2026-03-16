@@ -67,6 +67,44 @@ def test_create_openai_client_custom_base_url(monkeypatch):
     assert client.base_url == "https://custom.local/v1"
 
 
+def test_create_openai_client_verify_ssl_disabled(monkeypatch):
+    captured = {}
+
+    class DummyClient:
+        def __init__(self, api_key, base_url=None, http_client=None):
+            self.api_key = api_key
+            self.http_client = http_client
+
+    class DummyHttpxClient:
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+
+    monkeypatch.setattr(mod, "OpenAI", DummyClient)
+
+    import types
+    fake_httpx = types.ModuleType("httpx")
+    fake_httpx.Client = DummyHttpxClient
+    monkeypatch.setitem(__import__("sys").modules, "httpx", fake_httpx)
+
+    client = mod.create_openai_client("openai", "", "sk-test", verify_ssl=False)
+
+    assert isinstance(client.http_client, DummyHttpxClient)
+    assert captured.get("verify") is False
+
+
+def test_create_openai_client_verify_ssl_default(monkeypatch):
+    class DummyClient:
+        def __init__(self, api_key, base_url=None, http_client=None):
+            self.api_key = api_key
+            self.http_client = http_client
+
+    monkeypatch.setattr(mod, "OpenAI", DummyClient)
+
+    client = mod.create_openai_client("openai", "", "sk-test")
+
+    assert client.http_client is None
+
+
 def test_models_for_provider_known():
     update = mod.models_for_provider("openai")
     choices = _get_update_attr(update, "choices")
