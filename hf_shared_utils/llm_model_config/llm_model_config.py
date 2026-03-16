@@ -64,6 +64,8 @@ BASE_URLS: Dict[str, str] = {
     "anthropic": "https://api.anthropic.com/v1/",
     "google": "https://generativelanguage.googleapis.com/v1beta/openai/",
     "deepseek": "https://api.deepseek.com",
+    "mistral": "https://api.mistral.ai/v1",
+    "cohere": "https://api.cohere.com/v2",
     "groq": "https://api.groq.com/openai/v1",
     "grok": "https://api.x.ai/v1",
     "openrouter": "https://openrouter.ai/api/v1",
@@ -76,6 +78,8 @@ PROVIDERS: List[str] = [
     "anthropic",
     "google",
     "deepseek",
+    "mistral",
+    "cohere",
     "groq",
     "grok",
     "openrouter",
@@ -89,6 +93,7 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     "openai": [
         # GPT-5 family (latest recommended)
         "gpt-5.4",
+        "gpt-5.4-pro",
         "gpt-5.2",
         "gpt-5.1",
         "gpt-5",
@@ -103,6 +108,7 @@ POPULAR_MODELS: Dict[str, List[str]] = {
         "gpt-4o-mini",
         # Reasoning models
         "o3",
+        "o3-pro",
         "o4-mini",
     ],
 
@@ -120,15 +126,15 @@ POPULAR_MODELS: Dict[str, List[str]] = {
     # Google Gemini model codes (OpenAI-compat endpoint supported)
     # https://ai.google.dev/gemini-api/docs/models
     "google": [
-        "gemini-3.1-pro",
-        "gemini-3-flash",
-        "gemini-3.1-flash-lite",
+        # Gemini 3.x (preview)
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-3.1-flash-lite-preview",
+        # Gemini 2.5 (stable / GA)
         "gemini-2.5-pro",
         "gemini-2.5-flash",
         "gemini-2.5-flash-lite",
         # Useful previews / special modalities
-        "gemini-2.5-flash-preview-09-2025",
-        "gemini-2.5-flash-lite-preview-09-2025",
         "gemini-2.5-pro-preview-tts",
         "gemini-2.5-flash-preview-tts",
         "gemini-2.5-flash-image",
@@ -142,21 +148,48 @@ POPULAR_MODELS: Dict[str, List[str]] = {
         "deepseek-reasoner",
     ],
 
+    # Mistral AI model IDs (see Mistral docs)
+    # https://docs.mistral.ai/getting-started/models
+    "mistral": [
+        "mistral-large-3-25-12",
+        "mistral-medium-3-1-25-08",
+        "mistral-small-3-2-25-06",
+        "magistral-medium-1-2-25-09",
+        "magistral-small-1-2-25-09",
+        "devstral-2-25-12",
+        "codestral-25-08",
+    ],
+
+    # Cohere model IDs (see Cohere docs)
+    # https://docs.cohere.com/docs/models
+    "cohere": [
+        "command-a-03-2025",
+        "command-a-reasoning-08-2025",
+        "command-a-vision-07-2025",
+        "command-r-plus-08-2024",
+        "command-r7b-12-2024",
+    ],
+
     # Groq (OpenAI-compatible) model IDs (see Groq docs)
     # https://console.groq.com/docs/models
     "groq": [
+        "openai/gpt-oss-120b",
+        "openai/gpt-oss-20b",
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
+        "meta-llama/llama-4-scout-17b-16e-instruct",
+        "qwen/qwen3-32b",
     ],
 
     # xAI Grok model IDs (see xAI docs)
     # https://docs.x.ai/developers/models
     "grok": [
         "grok-4.20",
+        "grok-4.1",
         "grok-4",
-        "grok-4-latest",
         "grok-3",
         "grok-3-mini",
+        "grok-code-fast-1",
     ],
 
     # OpenRouter uses provider-prefixed model IDs.
@@ -166,19 +199,22 @@ POPULAR_MODELS: Dict[str, List[str]] = {
         "openai/gpt-5-mini",
         "anthropic/claude-opus-4-6",
         "anthropic/claude-sonnet-4-6",
-        "google/gemini-3.1-pro",
+        "google/gemini-3.1-pro-preview",
         "deepseek/deepseek-reasoner",
+        "mistralai/mistral-large-3-25-12",
         "x-ai/grok-4.20",
-        "minimax/m2.5",
+        "minimax/minimax-m2.5",
+        "cohere/command-a-03-2025",
     ],
 
     # MiniMax model IDs (see MiniMax API docs)
-    # https://api.minimax.chat/
+    # https://platform.minimax.io/docs/guides/models-intro
     "minimax": [
-        "m2.5",
-        "m2-her",
-        "m2.1",
-        "m2",
+        "MiniMax-M2.5",
+        "MiniMax-M2.5-highspeed",
+        "MiniMax-M2.1",
+        "MiniMax-M2",
+        "M2-her",
     ],
 
     "custom": [],
